@@ -1,0 +1,1 @@
+copy a:\M3system\LTVVideo\Settings.xml C:\Users\schegolihin\Desktop\LTVVideo\Settings.xml

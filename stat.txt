@@ -1,0 +1,112 @@
+using System;
+//using Person;
+using System.IO;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+//using System.Net.Http;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Security.Principal;
+
+
+namespace Application
+{
+	class Program
+	{
+		public class Graph
+		{
+			public IdentityReference Owner{get;set;}
+			public System.DateTime Time{get;set;}
+			
+			public Graph(IdentityReference owner, System.DateTime time)
+			{
+				this.Owner = owner;
+				this.Time = time;
+				
+			}
+		}
+		
+		public class Stat
+		{
+			public string Name{get;set;}
+			public int Quantity{get;set;}			
+		}
+		
+		
+		public static void Main(string[] args)
+		{
+			
+			// day1, month1, day2, month2
+			StatInfo(23,5,24,5);		
+		}
+		
+		static public void StatInfo(int d1, int m1, int d2, int m2)
+		{
+			List<Graph> lst = new List<Graph>();
+			
+			string path =@"A:\Акты технической экспертизы\";
+			var dirs = new List<string>();
+			
+			GetAllDirectories(path, ref dirs, ref lst);
+			
+		
+			var date1 = new DateTime(2022, m1, d1, 0, 0, 0);
+			var date2 = new DateTime(2022, m2, d2, 0, 0, 0);
+			
+			List<Stat> s = GetStatistic(date1,date2,lst);
+			
+			foreach(var i in s)
+			{
+				
+				Console.WriteLine(i.Name + " - " + i.Quantity);
+				
+			}
+			
+		}
+		
+		static public void GetAllDirectories(string path, ref List<string> dirs, ref List<Graph> lst)
+		{
+			var d = Directory.GetDirectories(path);
+			dirs.AddRange(d);
+			
+			foreach(var item in d)
+			{	
+				DirectoryInfo di = new DirectoryInfo(item);
+				if((di.Name[0]>='0'&&di.Name[0]<='9')==false)
+				{
+					if(di.Name != "Архив")
+					{				
+						GetAllDirectories(item, ref dirs, ref lst);
+					}	
+				}
+				else
+				{
+					
+					lst.Add(new Graph(di.GetAccessControl().GetOwner(typeof(NTAccount)),di.CreationTime));
+				}				
+			}			
+		}
+		
+		static public List<Stat> GetStatistic(DateTime start, DateTime end, List<Graph> owners)
+		{
+			List<Stat> lst = new List<Stat>();
+			lst.Add(new Stat(){Name = "safronov",Quantity=0});
+			lst.Add(new Stat(){Name = "ershov",Quantity=0});
+			lst.Add(new Stat(){Name ="Schegolihin", Quantity=0});
+			
+			foreach(var item in owners)
+			{
+				if(item.Time>=start&&item.Time<=end)
+				{
+					
+					if(item.Owner.ToString() ==@"PLC\safronov") lst[0].Quantity++;
+					else if(item.Owner.ToString() ==@"PLC\ershov") lst[1].Quantity++;
+					else if(item.Owner.ToString() ==@"PLC\Schegolihin") lst[2].Quantity++;
+				}
+			}			
+			return lst;
+		}				
+	}
+}

@@ -1,0 +1,137 @@
+using System;
+//using Person;
+using System.IO;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+//using System.Net.Http;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+
+// Process.Start
+using System.Diagnostics;
+
+using System.IO.Compression;
+//using System.IO.Compression.FileSystem;
+
+
+
+namespace Application
+{
+	class Program
+	{
+		
+		public static void Main(string[] args)
+		{
+			int[] snow1 ={1,2,3,4,5,6};
+			int[] snow2 ={6,5,4,3,2,1};
+			
+			List<int[]> lst =new List<int[]>()
+			{
+				new int[]{1,2,3,4,5,6},
+				new int[]{6,5,0,3,2,1},
+				new int[]{1,2,3,4,5,6},
+				new int[]{1,2,0,2,5,6},
+				new int[]{1,2,0,1,5,6},
+				new int[]{5,4,3,2,1,6}
+			};
+
+			IdentifyIdentical(lst, 6);
+			
+		
+		}
+		
+		static public int IdentifyIdentical(List<int[]> snowflakes, int n)
+		{
+			for(int i =0; i< n;i++)
+				for(int j=i+1;j<n;j++)
+				{
+					if(AreIdentical(snowflakes[i], snowflakes[j]))
+					{
+						Console.WriteLine("Twin snowflakes found.");
+						return 1;
+					}
+				}
+			return 0;
+		}
+		
+		
+		
+		static public bool MoveRight(int[] snow1, int[] snow2,int start)
+		{
+			//->
+			//-1->
+			int lengthgth =6;
+			for(int i =0; i<lengthgth; i++)
+			{
+				if(snow1[i]!=snow2[(start+i)%6]) return false;
+			}
+			return true;
+		}
+		
+		static public bool MoveLeft(int[] snow1, int[] snow2,int start)
+		{
+			int length =6;
+			int index =0;
+			for(int i =0;i<length;i++)
+			{
+				//<-
+				index= start -i;
+				if(index<0) index+=length;
+				if(snow1[i]!=snow2[index]) return false;
+			}
+			return true;
+		}
+		static public bool AreIdentical(int[] snow1, int[] snow2)
+		{
+			for(int i =0;i< 6;i++)
+			{
+				if(MoveRight(snow1,snow2,i)) return true;
+				if(MoveLeft(snow1,snow2,i)) return true;
+			}
+			
+			return false;
+		}
+		
+		
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
